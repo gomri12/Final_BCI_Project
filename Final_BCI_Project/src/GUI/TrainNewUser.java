@@ -16,13 +16,19 @@ import javax.swing.JMenuItem;
 import javax.swing.JProgressBar;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.SwingConstants;
+import java.awt.Color;
 
 public class TrainNewUser extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
 	private TrainNewUser trainNewUserRef = this;
-
+	private JComboBox comboBox;
+	private JLabel instroctionLabel;
+	private JProgressBar progressBar;
+	
 	/**
 	 * Create the frame.
 	 * @param mainWindowRef 
@@ -68,27 +74,68 @@ public class TrainNewUser extends JFrame {
 		
 		textField = new JTextField();
 		textField.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		textField.setBounds(118, 14, 153, 20);
+		textField.setBounds(125, 14, 146, 20);
 		mainPanel.add(textField);
 		textField.setColumns(10);
 		
 		JButton btnStartTraining = new JButton("Start Training");
 		btnStartTraining.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+//				int index = comboBox.getSelectedIndex();
+//				if(index == 0)
+//				{
+//					Edk.INSTANCE.EE_CognitivSetTrainingAction(0,EmoState.EE_CognitivAction_t.COG_NEUTRAL.ToInt());
+//					Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
+//				}
+//				if(index ==1)
+//				{
+//					try
+//					{
+//						EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_PUSH, true);
+//						EnableCognitivActionsList();
+//						StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_PUSH);
+//					}
+//					catch(Exception ex){
+//						ex.printStackTrace();
+//					}
+//				}
+//				if(index == 2)
+//				{
+//					try
+//					{
+//						EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_LIFT, true);
+//						EnableCognitivActionsList();
+//						StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_LIFT);
+//					}
+//					catch(Exception ex){
+//						ex.printStackTrace();
+//					}
+//				}
 			}
 		});
 		btnStartTraining.setFont(new Font("Tahoma", Font.PLAIN, 16));
-		btnStartTraining.setBounds(10, 56, 261, 39);
+		btnStartTraining.setBounds(10, 69, 261, 39);
 		mainPanel.add(btnStartTraining);
 		
-		JLabel lblNewLabel = new JLabel("Instructions");
-		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 18));
-		lblNewLabel.setBounds(10, 106, 261, 79);
-		mainPanel.add(lblNewLabel);
+		instroctionLabel = new JLabel("Clear Your Mind");
+		instroctionLabel.setBackground(Color.WHITE);
+		instroctionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		instroctionLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+		instroctionLabel.setBounds(10, 106, 261, 79);
+		mainPanel.add(instroctionLabel);
 		
-		JProgressBar progressBar = new JProgressBar();
+		progressBar = new JProgressBar();
 		progressBar.setBounds(10, 196, 261, 28);
 		mainPanel.add(progressBar);
+		
+	    String [] options = {"Neutral","Forward","Backward","Left","Right"};
+	    comboBox = new JComboBox(options);
+		comboBox.setBounds(125, 38, 146, 20);
+		mainPanel.add(comboBox);
+		
+		JLabel lblChooseAction = new JLabel("Choose Action:");
+		lblChooseAction.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblChooseAction.setBounds(10, 41, 127, 14);
+		mainPanel.add(lblChooseAction);
 	}
 }

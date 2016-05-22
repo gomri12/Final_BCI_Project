@@ -3,8 +3,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
 public class EmotivRawData {
-	// public static void main(String[] args)
-	public EmotivRawData() {
+	 public static void main(String[] args)
+	 {
 
 		new Thread() {
 			private IntByReference pXOut = new IntByReference(0);

@@ -11,6 +11,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
 import bluetooth.BluetoothConnection;
+import emotiv.EmotivRawData;
 
 import javax.swing.JMenu;
 import java.awt.BorderLayout;
@@ -37,6 +38,7 @@ public class RobotControlWindow extends JFrame {
 		this.mw = mw;
 		rbc = this;
 		BTConnection = new BluetoothConnection();
+		EmotivRawData ERD = new EmotivRawData();
 		initialize();
 		
 	}
