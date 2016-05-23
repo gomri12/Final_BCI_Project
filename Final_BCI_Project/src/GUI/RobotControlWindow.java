@@ -11,7 +11,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
 import bluetooth.BluetoothConnection;
-import emotiv.EmotivRawData;
+import emotiv.EmoRawData;
 
 import javax.swing.JMenu;
 import java.awt.BorderLayout;
@@ -30,6 +30,10 @@ public class RobotControlWindow extends JFrame {
 	private MainWindow mw;
 	private RobotControlWindow rbc;
 	private JTextPane commandTextPane;
+	private EmoRawData ERD;
+	private long lastCommandTime;
+	private long currentCommandTime;
+	
 	/**
 	 * Create the application.
 	 */
@@ -37,10 +41,10 @@ public class RobotControlWindow extends JFrame {
 
 		this.mw = mw;
 		rbc = this;
+
 		BTConnection = new BluetoothConnection();
-		EmotivRawData ERD = new EmotivRawData();
 		initialize();
-		
+		lastCommandTime = System.currentTimeMillis();
 	}
 
 	/**
@@ -84,7 +88,7 @@ public class RobotControlWindow extends JFrame {
 		lblChooseBluetooth.setHorizontalAlignment(SwingConstants.CENTER);
 		bluetoothPanel.add(lblChooseBluetooth);
 		
-		JComboBox COMportComboBox = new JComboBox();
+		final JComboBox COMportComboBox = new JComboBox();
 		for (String s : COMList) {
 			COMportComboBox.addItem(s);
 		}
@@ -120,14 +124,15 @@ public class RobotControlWindow extends JFrame {
 		lblCommand.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblCommand.setBounds(33, 257, 109, 26);
 		centerPanel.add(lblCommand);
-		
+
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				BTConnection.setCOMPort(COMportComboBox.getSelectedIndex());
 				if(BTConnection.connectToBluetooth().equals("Success")){
 						errorLable.setText("Connected");
 						errorLable.setForeground(new Color(0, 255, 0));
-						sendBluetoothCommand("b");
+						ERD = new EmoRawData(rbc);
+						btnNewButton.setEnabled(false);
 
 				}else{
 					errorLable.setForeground(new Color(255, 0, 0));
@@ -164,7 +169,10 @@ public class RobotControlWindow extends JFrame {
 		mnFile.add(mntmExit);
 	}
 	
-	private void sendBluetoothCommand(String command){
+	public void sendBluetoothCommand(String command){
+		currentCommandTime = System.currentTimeMillis();
+		if((currentCommandTime - lastCommandTime)>1500){
+		lastCommandTime = currentCommandTime;
 		String message;
 		switch (command) {
 		case "f":
@@ -194,6 +202,7 @@ public class RobotControlWindow extends JFrame {
 			document.insertString(document.getLength(), message + "\n", null);
 		} catch (BadLocationException e) {
 			message ="Failed sending a commaned";
+		}
 		}
 	}
 }

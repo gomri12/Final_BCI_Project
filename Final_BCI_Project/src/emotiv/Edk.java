@@ -1,4 +1,5 @@
 package emotiv;
+
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -18,7 +19,16 @@ public interface Edk extends Library
 
     	//! Expressiv Suite training control enumerator
     	public enum EE_ExpressivTrainingControl_t {
-    		EXP_NONE, EXP_START, EXP_ACCEPT, EXP_REJECT, EXP_ERASE, EXP_RESET
+    		EXP_NONE(0), EXP_START(1), EXP_ACCEPT(2), EXP_REJECT(3), EXP_ERASE(4), EXP_RESET(5);
+    		private int type;
+    		EE_ExpressivTrainingControl_t (int val)
+    		{
+    			type = val;
+    		}
+    		public int toInt()
+    		{
+    			return type;
+    		}
     	} 
 
     	//! Expressiv Suite signature type enumerator
@@ -28,7 +38,17 @@ public interface Edk extends Library
 
     	 //! Cognitiv Suite training control enumerator
     	public enum EE_CognitivTrainingControl_t {
-    		COG_NONE, COG_START, COG_ACCEPT, COG_REJECT, COG_ERASE, COG_RESET
+    		COG_NONE(0), COG_START(1), COG_ACCEPT(2), COG_REJECT(3), COG_ERASE(4), COG_RESET(5);
+    		
+    		private int type;
+    		EE_CognitivTrainingControl_t(int val)
+    		{
+    			type = val;
+    		}
+    		public int getType()
+    		{
+    			return type;
+    		}
     	} 
 
     //DEPLOYMENT::STABLE_RELEASE::REMOVE_START
@@ -36,7 +56,16 @@ public interface Edk extends Library
     	//! Cognitiv Suite level enumerator
     	//@@ This constant has been obsoleted
     	public enum EE_CognitivLevel_t {
-    		COG_LEVEL1, COG_LEVEL2, COG_LEVEL3, COG_LEVEL4
+    		COG_LEVEL1(0), COG_LEVEL2(1), COG_LEVEL3(2), COG_LEVEL4(3);
+    		private int level;
+    		EE_CognitivLevel_t(int val)
+    		{
+    			level = val;
+    		}
+    		public int toInt()
+    		{
+    			return level;
+    		}
     	} 
 
     	//! EmoEngine event types
@@ -73,10 +102,26 @@ public interface Edk extends Library
     	
     	//! Cognitiv-specific event types
     	public enum EE_CognitivEvent_t {
-    		EE_CognitivNoEvent, EE_CognitivTrainingStarted, EE_CognitivTrainingSucceeded,
-    		EE_CognitivTrainingFailed, EE_CognitivTrainingCompleted, EE_CognitivTrainingDataErased,
-    		EE_CognitivTrainingRejected, EE_CognitivTrainingReset,
-    		EE_CognitivAutoSamplingNeutralCompleted, EE_CognitivSignatureUpdated
+    		EE_CognitivNoEvent (0), 
+    		EE_CognitivTrainingStarted (1), 
+    		EE_CognitivTrainingSucceeded (2),
+    		EE_CognitivTrainingFailed(3), 
+    		EE_CognitivTrainingCompleted(4),
+    		EE_CognitivTrainingDataErased(5),
+    		EE_CognitivTrainingRejected(6), 
+    		EE_CognitivTrainingReset(7),
+    		EE_CognitivAutoSamplingNeutralCompleted(8), 
+    		EE_CognitivSignatureUpdated(9);
+    		
+    		private int cType;
+    		EE_CognitivEvent_t(int val)
+    		{
+    			cType = val;
+    		}
+    		public int getType()
+    		{
+    			return cType;
+    		}
     	} 
 
     //DEPLOYMENT::NON_PREMIUM_RELEASE::REMOVE_START
@@ -118,7 +163,7 @@ public interface Edk extends Library
 
     		\param szHost - A null-terminated string identifying the hostname or IP address of the remote EmoEngine server
     		\param port - The port number of the remote EmoEngine server
-    					- If connecting to the emotiv Control Panel, use port 3008
+    					- If connecting to the Emotiv Control Panel, use port 3008
     					- If connecting to the EmoComposer, use port 1726
     	
     		\return EDK_ERROR_CODE
@@ -141,7 +186,7 @@ public interface Edk extends Library
     		EE_EngineDisconnect();
 
 
-    	//! Controls the output of logging information from EmoEngine (which is off by default). This should only be enabled if instructed to do so by emotiv developer support for the purposes of collecting diagnostic information.
+    	//! Controls the output of logging information from EmoEngine (which is off by default). This should only be enabled if instructed to do so by Emotiv developer support for the purposes of collecting diagnostic information.
     	/*!
     	    \param szFilename - The path of the logfile
     		\param fEnable - If non-zero, then diagnostic information will be written to logfile.
@@ -626,10 +671,11 @@ public interface Edk extends Library
 
     		\sa edkErrorCode.h, int
     	*/
-    	int
-    		EE_CognitivSetActiveActions(int userId, NativeLong activeActions);
+    	//int
+    	//	EE_CognitivSetActiveActions(int userId, NativeLong activeActions);
 
-    	
+    	int
+			EE_CognitivSetActiveActions(int userId, long activeActions);
     	//! Get the current Cognitiv active action types
     	/*!
     		\param userId - user ID
@@ -924,7 +970,7 @@ public interface Edk extends Library
     	int
     		EE_HardwareGetVersion(int userId, NativeLongByReference pHwVersionOut);
 
-    	//! Returns the current version of the emotiv SDK software
+    	//! Returns the current version of the Emotiv SDK software
         /*!
     		\param pszVersionOut - SDK software version in X.X.X.X format. Note: current beta releases have a major version of 0.
     		\param nVersionChars - Length of byte buffer pointed to by pszVersion argument.
@@ -1150,6 +1196,8 @@ public interface Edk extends Library
     		        - EDK_ERROR_CODEEDK_OK if the command succeeded
     	*/
     	int EE_DataGetSamplingRate(int userId, IntByReference samplingRateOut);
+    	
+    	
     //DEPLOYMENT::NON_PREMIUM_RELEASE::REMOVE_END
 }
     

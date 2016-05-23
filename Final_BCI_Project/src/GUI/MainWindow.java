@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import emotiv.EmotivRawData;
-
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -75,7 +73,7 @@ public class MainWindow extends JFrame {
 		JButton btnTrain = new JButton("Train New User");
 		btnTrain.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TrainNewUser tnu = new TrainNewUser(MainWindowRef);
+				TrainNewUserWindow tnu = new TrainNewUserWindow(MainWindowRef);
 				tnu.setVisible(true);
 				MainWindowRef.setVisible(false);
 			}

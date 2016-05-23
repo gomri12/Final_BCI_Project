@@ -1,12 +1,5 @@
 package emotiv;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -14,9 +7,12 @@ import javax.swing.JOptionPane;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 
+import GUI.TrainNewUserWindow;
+
 public class EmoTrainNewUser extends Thread {
 	
 	public static JComboBox comboBox;
+	private TrainNewUserWindow TNURef;
 	public static int[] cognitivActionList ={
 			   EmoState.EE_CognitivAction_t.COG_NEUTRAL.ToInt(),
 			   EmoState.EE_CognitivAction_t.COG_PUSH.ToInt(),
@@ -37,14 +33,14 @@ public class EmoTrainNewUser extends Thread {
 	public static Boolean[] cognitivActionsEnabled = new Boolean[cognitivActionList.length];
 	
 	
-	public EmoTrainNewUser(){
+	public EmoTrainNewUser(TrainNewUserWindow TNU){
 		cognitivActionsEnabled[0] = true;
         for (int i = 1; i < cognitivActionList.length; i++)
         {
             cognitivActionsEnabled[i] = false;
         }
         
-
+        TNURef = TNU;
 	    
 			
 	}
@@ -53,7 +49,7 @@ public class EmoTrainNewUser extends Thread {
         if (cognitivAction == EmoState.EE_CognitivAction_t.COG_NEUTRAL)
         {
         	Edk.INSTANCE.EE_CognitivSetTrainingAction(0,EmoState.EE_CognitivAction_t.COG_NEUTRAL.ToInt());
-//			Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
+			Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
         }
         else
             for (int i = 1; i < cognitivActionList.length; i++)
@@ -64,7 +60,7 @@ public class EmoTrainNewUser extends Thread {
                     if (cognitivActionsEnabled[i])
                     {
                     	Edk.INSTANCE.EE_CognitivSetTrainingAction(0, cognitivAction.ToInt());
- //                   	Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
+                    	Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
                     }
                     
                 }
@@ -96,7 +92,7 @@ public class EmoTrainNewUser extends Thread {
                 
             }
         }
-//        Edk.INSTANCE.EE_CognitivSetActiveActions(0, cognitivActions);
+        Edk.INSTANCE.EE_CognitivSetActiveActions(0, cognitivActions);
         
     }
     
@@ -151,43 +147,48 @@ public class EmoTrainNewUser extends Thread {
 					if(eventType == Edk.EE_Event_t.EE_UserAdded.ToInt())
 					{
 						EmoProfileManagement.AddNewProfile("3");
-						JOptionPane.showMessageDialog(new JFrame(), "User add", "Dialog",
+						JOptionPane.showMessageDialog(new JFrame(), "Emotiv Dongle Is Connected", "Dialog",
 					        JOptionPane.INFORMATION_MESSAGE);
 					}
 					
 					if(eventType == Edk.EE_Event_t.EE_CognitivEvent.ToInt())
 					{
-//						int cogType = Edk.INSTANCE.EE_CognitivEventGetType(eEvent);
-//						
-//						if(cogType ==Edk.EE_CognitivEvent_t.EE_CognitivTrainingStarted.getType())
-//						{
-//							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Start", "Dialog",
-//							        JOptionPane.INFORMATION_MESSAGE);
-//						}
-//						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingCompleted.getType())
-//						{
-//							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Complete", "Dialog",
-//							        JOptionPane.INFORMATION_MESSAGE);
-//						}
-//						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingSucceeded.getType())
-//						{
-//							Edk.INSTANCE.EE_CognitivSetTrainingControl(0,Edk.EE_CognitivTrainingControl_t.COG_ACCEPT.getType());
-//							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Succeeded", "Dialog",
-//							        JOptionPane.INFORMATION_MESSAGE);
-//						}
-//						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingFailed.getType())
-//						{
-//							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Failed", "Dialog",
-//							        JOptionPane.ERROR_MESSAGE);
-//						}
-//						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingRejected.getType())
-//						{
-//							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Rejected", "Dialog",
-//							        JOptionPane.ERROR_MESSAGE);
-//						}
+						int cogType = Edk.INSTANCE.EE_CognitivEventGetType(eEvent);
+						
+						if(cogType ==Edk.EE_CognitivEvent_t.EE_CognitivTrainingStarted.getType())
+						{
+							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Start", "Dialog",
+							        JOptionPane.INFORMATION_MESSAGE);
+//							System.out.println("Cognitiv Training Start");
+						}
+						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingCompleted.getType())
+						{
+							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Complete", "Dialog",
+							        JOptionPane.INFORMATION_MESSAGE);
+							TNURef.SetUIEnable(true);
+						}
+						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingSucceeded.getType())
+						{
+							Edk.INSTANCE.EE_CognitivSetTrainingControl(0,Edk.EE_CognitivTrainingControl_t.COG_ACCEPT.getType());
+							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Succeeded", "Dialog",
+							        JOptionPane.INFORMATION_MESSAGE);
+							
+						}
+						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingFailed.getType())
+						{
+							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Failed", "Dialog",
+							        JOptionPane.ERROR_MESSAGE);
+							TNURef.SetUIEnable(true);
+						}
+						if(cogType == Edk.EE_CognitivEvent_t.EE_CognitivTrainingRejected.getType())
+						{
+							JOptionPane.showMessageDialog(new JFrame(), "Cognitiv Training Rejected", "Dialog",
+							        JOptionPane.ERROR_MESSAGE);
+							TNURef.SetUIEnable(true);
+						}
 					}
-//					if(eventType == Edk.EE_Event_t.EE_EmoStateUpdated.ToInt())
-//					{
+					if(eventType == Edk.EE_Event_t.EE_EmoStateUpdated.ToInt())
+					{
 //						Edk.INSTANCE.EE_EmoEngineEventGetEmoState(eEvent, eState);
 //						
 //						//{
@@ -199,7 +200,7 @@ public class EmoTrainNewUser extends Thread {
 //								System.out.println("Power:" + power);
 //							}
 //						//}
-//					}
+					}
 				}
 				else if (state != EdkErrorCode.EDK_NO_EVENT.ToInt()) {
 					System.out.println("Internal error in Emotiv Engine!");
@@ -210,4 +211,61 @@ public class EmoTrainNewUser extends Thread {
 	    	Edk.INSTANCE.EE_EngineDisconnect();
 	    	System.out.println("Disconnected!");
     }
+    
+	public void StartTraining(int index) {
+		if(index == 0)
+		{
+			Edk.INSTANCE.EE_CognitivSetTrainingAction(0,EmoState.EE_CognitivAction_t.COG_NEUTRAL.ToInt());
+			Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
+		}
+		if(index ==1)
+		{
+			try
+			{
+				EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_PUSH, true);
+				EnableCognitivActionsList();
+				StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_PUSH);
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		if(index == 2)
+		{
+			try
+			{
+				EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_PULL, true);
+				EnableCognitivActionsList();
+				StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_PULL);
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		if(index == 3)
+		{
+			try
+			{
+				EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_LEFT, true);
+				EnableCognitivActionsList();
+				StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_LEFT);
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		if(index == 4)
+		{
+			try
+			{
+				EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_RIGHT, true);
+				EnableCognitivActionsList();
+				StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_RIGHT);
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+		
+	}
 }

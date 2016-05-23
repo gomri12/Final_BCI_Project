@@ -6,6 +6,10 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import emotiv.EmoProfileManagement;
+import emotiv.EmoTrainNewUser;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
@@ -20,25 +24,26 @@ import javax.swing.JComboBox;
 import javax.swing.SwingConstants;
 import java.awt.Color;
 
-public class TrainNewUser extends JFrame {
+public class TrainNewUserWindow extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
-	private TrainNewUser trainNewUserRef = this;
+	private TrainNewUserWindow trainNewUserRef = this;
 	private JComboBox comboBox;
 	private JLabel instroctionLabel;
-	private JProgressBar progressBar;
-	
+	private JButton btnStartTraining;
+
 	/**
 	 * Create the frame.
 	 * @param mainWindowRef 
 	 */
-	public TrainNewUser(MainWindow mainWindowRef) {
+	public TrainNewUserWindow(MainWindow mainWindowRef) {
 		setTitle("Train New User");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 312, 303);
 		
-		
+		EmoTrainNewUser TNU = new EmoTrainNewUser(this);
+		TNU.start();
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -78,41 +83,8 @@ public class TrainNewUser extends JFrame {
 		mainPanel.add(textField);
 		textField.setColumns(10);
 		
-		JButton btnStartTraining = new JButton("Start Training");
-		btnStartTraining.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-//				int index = comboBox.getSelectedIndex();
-//				if(index == 0)
-//				{
-//					Edk.INSTANCE.EE_CognitivSetTrainingAction(0,EmoState.EE_CognitivAction_t.COG_NEUTRAL.ToInt());
-//					Edk.INSTANCE.EE_CognitivSetTrainingControl(0, Edk.EE_CognitivTrainingControl_t.COG_START.getType());
-//				}
-//				if(index ==1)
-//				{
-//					try
-//					{
-//						EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_PUSH, true);
-//						EnableCognitivActionsList();
-//						StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_PUSH);
-//					}
-//					catch(Exception ex){
-//						ex.printStackTrace();
-//					}
-//				}
-//				if(index == 2)
-//				{
-//					try
-//					{
-//						EnableCognitivAction(EmoState.EE_CognitivAction_t.COG_LIFT, true);
-//						EnableCognitivActionsList();
-//						StartTrainingCognitiv(EmoState.EE_CognitivAction_t.COG_LIFT);
-//					}
-//					catch(Exception ex){
-//						ex.printStackTrace();
-//					}
-//				}
-			}
-		});
+		btnStartTraining = new JButton("Start Training");
+
 		btnStartTraining.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		btnStartTraining.setBounds(10, 69, 261, 39);
 		mainPanel.add(btnStartTraining);
@@ -124,18 +96,41 @@ public class TrainNewUser extends JFrame {
 		instroctionLabel.setBounds(10, 106, 261, 79);
 		mainPanel.add(instroctionLabel);
 		
-		progressBar = new JProgressBar();
-		progressBar.setBounds(10, 196, 261, 28);
-		mainPanel.add(progressBar);
-		
 	    String [] options = {"Neutral","Forward","Backward","Left","Right"};
 	    comboBox = new JComboBox(options);
 		comboBox.setBounds(125, 38, 146, 20);
 		mainPanel.add(comboBox);
 		
+		btnStartTraining.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				int index = comboBox.getSelectedIndex();
+				textField.setEnabled(false);
+				SetUIEnable(false);
+				TNU.StartTraining(index);
+			}
+		});
 		JLabel lblChooseAction = new JLabel("Choose Action:");
 		lblChooseAction.setFont(new Font("Tahoma", Font.PLAIN, 16));
 		lblChooseAction.setBounds(10, 41, 127, 14);
 		mainPanel.add(lblChooseAction);
+		
+		JButton btnSave = new JButton("Save User Data");
+		btnSave.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				EmoProfileManagement.SaveCurrentProfile();
+				EmoProfileManagement.SaveProfilesToFile();
+				TNU.stop();
+				trainNewUserRef.dispose();
+				mainWindowRef.setVisible(true);
+			}
+		});
+		btnSave.setBounds(10, 186, 261, 36);
+		mainPanel.add(btnSave);
+	}
+	public void SetUIEnable(Boolean flag){
+		btnStartTraining.setEnabled(flag);
+		comboBox.setEnabled(flag);
+		
 	}
 }
+	
