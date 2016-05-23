@@ -32,7 +32,11 @@ public class TrainNewUserWindow extends JFrame {
 	private JComboBox comboBox;
 	private JLabel instroctionLabel;
 	private JButton btnStartTraining;
-
+	private String[] userMessage = {"Clear Your Mind",
+			"*Imagine* Moving Your Right leg",
+			"*Imagine* Moving Your Left leg",
+			"*Imagine* Moving Your Left Arm",
+			"*Imagine* Moving Your Right Arm"};
 	/**
 	 * Create the frame.
 	 * @param mainWindowRef 
@@ -103,7 +107,9 @@ public class TrainNewUserWindow extends JFrame {
 		
 		btnStartTraining.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				EmoProfileManagement.AddNewProfile(textField.getText());
 				int index = comboBox.getSelectedIndex();
+				instroctionLabel.setText(userMessage[index]);
 				textField.setEnabled(false);
 				SetUIEnable(false);
 				TNU.StartTraining(index);
