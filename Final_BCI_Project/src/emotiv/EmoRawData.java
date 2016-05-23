@@ -10,16 +10,21 @@ import GUI.RobotControlWindow;
 public class EmoRawData extends Thread {
 	// public static void main(String[] args)
 	private RobotControlWindow RCWRef;
-
+	private boolean gflag = true;
+	private IntByReference pXOut = new IntByReference(0);
+	private IntByReference pYOut = new IntByReference(0);
+	
+	public void setGFlag(boolean flag){
+		gflag = flag;
+	}
+	
 	public EmoRawData(RobotControlWindow ref)
 
 	{
 		RCWRef = ref;
 	}
-
-	private IntByReference pXOut = new IntByReference(0);
-	private IntByReference pYOut = new IntByReference(0);
-
+	
+	
 	public void run() {
 		Pointer eEvent = Edk.INSTANCE.EE_EmoEngineEventCreate();
 		Pointer eState = Edk.INSTANCE.EE_EmoStateCreate();
@@ -108,20 +113,20 @@ public class EmoRawData extends Thread {
 							// System.out.println();
 						}
 						EmoProfileManagement.AddNewProfile("3");
-//						if (eventType == Edk.EE_Event_t.EE_EmoStateUpdated.ToInt()) {
+						if (eventType == Edk.EE_Event_t.EE_EmoStateUpdated.ToInt()) {
 							Edk.INSTANCE.EE_EmoEngineEventGetEmoState(eEvent, eState);
 //
 //							// {
 							
-							int action = EmoState.INSTANCE.ES_CognitivGetCurrentAction(eState);
-							double power = EmoState.INSTANCE.ES_CognitivGetCurrentActionPower(eState);
-							if (power != 0) {
-								System.out.println("Action:" + action);
-								System.out.println("Power:" + power);
-//							}
-//							// }
-						}
-
+//							int action = EmoState.INSTANCE.ES_CognitivGetCurrentAction(eState);
+//							double power = EmoState.INSTANCE.ES_CognitivGetCurrentActionPower(eState);
+//							if (power != 0) {
+//								System.out.println("Action:" + action);
+//								System.out.println("Power:" + power);
+							}
+						 
+						
+						if(gflag){
 						Edk.INSTANCE.EE_HeadsetGetGyroDelta(userID.getValue(), pXOut, pYOut);
 						if (pXOut.getValue() > 90) {
 							RCWRef.sendBluetoothCommand("r");
@@ -136,6 +141,7 @@ public class EmoRawData extends Thread {
 						} else if (pYOut.getValue() < -90) {
 							RCWRef.sendBluetoothCommand("b");
 							System.out.println("Backward");
+						}
 						}
 					}
 				}

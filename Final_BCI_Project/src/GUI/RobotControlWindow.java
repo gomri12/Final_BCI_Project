@@ -39,6 +39,7 @@ public class RobotControlWindow extends JFrame {
 	private JComboBox usersComboBox;
 	private JProgressBar progressBar;
 	private Thread prog;
+	private boolean gflag = false;
 
 	/**
 	 * Create the application.
@@ -179,6 +180,22 @@ public class RobotControlWindow extends JFrame {
 		lblPower.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblPower.setBounds(32, 193, 89, 26);
 		centerPanel.add(lblPower);
+		
+		JButton btnTest = new JButton("");
+
+		btnTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(gflag){
+					ERD.setGFlag(gflag);
+					gflag=false;
+				}else{
+					ERD.setGFlag(gflag);
+					gflag = true;
+				}
+			}
+		});
+		btnTest.setBounds(369, 239, 15, 15);
+		centerPanel.add(btnTest);
 
 		JMenuBar menuBar = new JMenuBar();
 		this.getContentPane().add(menuBar, BorderLayout.NORTH);
